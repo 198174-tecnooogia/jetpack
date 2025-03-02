@@ -2,6 +2,64 @@
 
 ### This is a list detailing changes for all Jetpack releases.
 
+## 14.4-a.7 - 2025-02-24
+### Enhancements
+- Newsletter: Add new newsletter widget. [#41807]
+- Connection: Disconnect all other users before disconnecting connection owner account. [#41923]
+- Custom Post Types: do not display testimonials and portfolios on block themes where they are not in use. [#41714]
+- Social: Update the admin page to be used by Editors and Authors. [#41859]
+
+### Bug fixes
+- Fix Social toggles. [#41912]
+- Newsletter: Fix post placement not displaying on certain block themes. [#41870]
+- Social Previews: Fix distorted image for Tumblr preview. [#41844]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Code: Prevent dynamic class properties. [#41857]
+- Jetpack AI: Prevent Chrome AI requests from incrementing request count. [#41900]
+- Jetpack SEO: Add image alt text step. [#41897]
+- Mailchimp Block: Prevent vertical stretch in button. [#41790]
+- Move the API endpoint for unlinking the user to the automattic/jetpack-connection package. [#41398]
+- Newsletter settings: Update copy. [#41884]
+- Recipe Block: Switch to strings for all block descriptions. [#41431]
+- Remove the Jetpack_Keyring_Service_Helper class in favour of the one in the Publicize package. [#41460]
+- Remove feature flag for new Like widget layout and code for old avatar popup. [#41849]
+- SEO Assistant: UX tweaks. [#41823]
+- Social: Fix PHP warnings on WordPress.com. [#41869]
+- Social: Update classic editor logic to use the new connections schema. [#41778]
+- Subscriptions Block: Unset invalid newsletter categories from attributes. [#41774]
+- Theme tools: Load theme compat functionality relevant to features in Classic Theme Helper package from this package. [#41598]
+
+## 14.4-a.5 - 2025-02-17
+### Enhancements
+- Connection: Display connection status on Users page independent of the SSO module. [#41794]
+- Forms block: Add number input. [#40962]
+- Subscriptions: Pre-select newsletter categories. [#41567]
+
+### Bug fixes
+- Geo Location: Remove support from default themes to prevent deprecation notice. [#41773]
+- Related Posts: Ensure images using the AVIF format are properly displayed. [#41760]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- API: Add a new site setting to hide the Action Bar in the REST API endpoint. [#41123]
+- AI Assistant: Add missing pre-defined prompt value to the tracking event. [#41670]
+- Jetpack AI: Adding translation support using Chrome's Gemini AI mini. [#41724]
+- Jetpack AI: Fix some styles and deprecation props. [#41814]
+- Jetpack SEO: Add box-shadow as in BigSky. [#41791]
+- Jetpack SEO: Add tracking events on significant actions. [#41697]
+- Jetpack SEO: Change AI feature request name. [#41762]
+- Jetpack SEO: Change copy on the completion step. [#41798]
+- Jetpack SEO: Move steps upwards so we can establish the assistant as a generic component and provide steps dynamically. [#41768]
+- Jetpack SEO: Rename CSS classes and events for consistency and alignment with event requirements. [#41800]
+- Jetpack SEO: Turn default filter value to true so to enable the SEO assistant by default. It remains as BETA though. [#41767]
+- General: Prevent deprecation notices on PHP 8. [#41733]
+- General: Remove unused setting. [#41658]
+- SEO Assistant: Add error handling to meta description step. [#41757]
+- SEO Assistant: Add initial error handling to title generation. [#41649]
+- SEO Assistant: Add store to keep assistant open when sidebar is closed. [#41816]
+- Social: Update social activation link in the editor to point to the new Social admin page. [#41741]
+- Subscribe Block: Fix double border on "Set up a paid plan" toolbar button. [#41784]
+
 ## 14.4-a.3 - 2025-02-11
 ### Enhancements
 - Media Page: Enable the "Untangle Calypso" feature. [#41628]

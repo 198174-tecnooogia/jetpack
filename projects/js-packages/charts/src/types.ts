@@ -24,7 +24,10 @@ export type SeriesData = {
 	group?: string;
 	label: string;
 	data: DataPointDate[] | DataPoint[];
-	options: { gradient?: { from: string; to: string; toOpacity?: number }; stroke?: string };
+	options?: {
+		gradient?: { from: string; to: string; fromOpacity?: number; toOpacity?: number };
+		stroke?: string;
+	};
 };
 
 export type MultipleDataPointsDate = {
@@ -143,7 +146,12 @@ export type BaseChartProps< T = DataPoint | DataPointDate > = {
 	 * More options for the chart.
 	 */
 	options?: {
-		yScale?: { type?: ScaleType; zero?: boolean };
+		yScale?: {
+			type?: ScaleType;
+			zero?: boolean;
+			domain?: [ number, number ];
+			range?: [ number, number ];
+		};
 		xScale?: { type?: ScaleType };
 		axis?: {
 			x?: AxisOptions;

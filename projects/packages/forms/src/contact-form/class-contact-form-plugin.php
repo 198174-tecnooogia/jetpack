@@ -8,9 +8,13 @@
 namespace Automattic\Jetpack\Forms\ContactForm;
 
 use Automattic\Jetpack\Assets;
+use Automattic\Jetpack\Connection\Manager as Connection_Manager;
 use Automattic\Jetpack\Extensions\Contact_Form\Contact_Form_Block;
 use Automattic\Jetpack\Forms\Jetpack_Forms;
 use Automattic\Jetpack\Forms\Service\Post_To_Url;
+use Automattic\Jetpack\Status;
+use Automattic\Jetpack\Terms_Of_Service;
+use Automattic\Jetpack\Tracking;
 use Jetpack_Options;
 use WP_Error;
 
@@ -517,6 +521,19 @@ class Contact_Form_Plugin {
 	 */
 	public static function gutenblock_render_field_file( $atts, $content ) {
 		$atts = self::block_attributes_to_shortcode_attributes( $atts, 'file' );
+		return Contact_Form::parse_contact_field( $atts, $content );
+	}
+
+	/**
+	 * Render the number field.
+	 *
+	 * @param array  $atts - the block attributes.
+	 * @param string $content - html content.
+	 *
+	 * @return string HTML for the file upload field.
+	 */
+	public static function gutenblock_render_field_number( $atts, $content ) {
+		$atts = self::block_attributes_to_shortcode_attributes( $atts, 'number' );
 		return Contact_Form::parse_contact_field( $atts, $content );
 	}
 
@@ -1934,7 +1951,7 @@ class Contact_Form_Plugin {
 				}
 			}
 
-			$tracking = new \Automattic\Jetpack\Tracking();
+			$tracking = new Tracking();
 			$tracking->record_user_event( $event_name, $event_props, $event_user );
 		}
 	}
@@ -2276,5 +2293,21 @@ class Contact_Form_Plugin {
 			return 'publish';
 		}
 		return $current_status;
+	}
+
+	/**
+	 * Returns whether we are in condition to track and use
+	 * analytics functionality like Tracks.
+	 *
+	 * @return bool Returns true if we can track analytics, else false.
+	 */
+	public static function can_use_analytics() {
+		$is_wpcom               = defined( 'IS_WPCOM' ) && IS_WPCOM;
+		$status                 = new Status();
+		$connection             = new Connection_Manager();
+		$tracking               = new Tracking( 'jetpack', $connection );
+		$should_enable_tracking = $tracking->should_enable_tracking( new Terms_Of_Service(), $status );
+
+		return $is_wpcom || $should_enable_tracking;
 	}
 }

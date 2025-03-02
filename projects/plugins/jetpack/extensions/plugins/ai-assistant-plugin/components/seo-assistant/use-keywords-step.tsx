@@ -1,4 +1,10 @@
-import { createInterpolateElement, useCallback, useEffect, useState } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMessages } from './wizard-messages';
 import type { Step } from './types';
@@ -6,12 +12,13 @@ import type { Step } from './types';
 export const useKeywordsStep = (): Step => {
 	const [ value, setValue ] = useState< string >( '' );
 	const [ rawInput, setRawInput ] = useState( '' );
-	const { messages, addMessage } = useMessages();
+	const { getMessages, addMessage } = useMessages();
+	const messages = getMessages();
 
 	const onStart = useCallback( async () => {
 		addMessage( {
 			content: __(
-				'To start, please enter 1–3 focus keywords that describe your blog post.',
+				'First, enter 1–3 keywords that best describe your blog post—this helps search engines understand what it’s about',
 				'jetpack'
 			),
 			showIcon: true,
@@ -40,6 +47,7 @@ export const useKeywordsStep = (): Step => {
 		if ( ! rawInput.trim() ) {
 			return '';
 		}
+
 		addMessage( { content: rawInput, isUser: true } );
 
 		const keywordsString = await new Promise< string >( resolve =>
@@ -48,9 +56,11 @@ export const useKeywordsStep = (): Step => {
 					if ( arr.length === 1 ) {
 						return curr;
 					}
+
 					if ( i === arr.length - 1 ) {
 						return `${ acc } </b>&<b> ${ curr }`;
 					}
+
 					return i === 0 ? curr : `${ acc }, ${ curr }`;
 				}, '' );
 
@@ -66,12 +76,13 @@ export const useKeywordsStep = (): Step => {
 			}
 		);
 		addMessage( { content: message } );
+
 		return value;
 	}, [ addMessage, rawInput, value ] );
 
 	return {
 		id: 'keywords',
-		title: __( 'Optimise for SEO', 'jetpack' ),
+		title: __( 'Improve SEO', 'jetpack' ),
 		label: __( 'Keywords', 'jetpack' ),
 		messages,
 		type: 'input',
@@ -82,5 +93,6 @@ export const useKeywordsStep = (): Step => {
 		value,
 		setValue,
 		onStart,
+		inputRef: useRef( null ),
 	};
 };

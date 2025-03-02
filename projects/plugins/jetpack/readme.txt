@@ -326,9 +326,17 @@ Jetpack Backup can do a full website migration to a new host, migrate theme file
 
 
 == Changelog ==
-### 14.4-a.3 - 2025-02-11
+### 14.4-a.7 - 2025-02-24
 #### Enhancements
-- Media Page: Enable the "Untangle Calypso" feature.
+- Newsletter: Add new newsletter widget.
+- Connection: Disconnect all other users before disconnecting connection owner account.
+- Custom Post Types: do not display testimonials and portfolios on block themes where they are not in use.
+- Social: Update the admin page to be used by Editors and Authors.
+
+#### Bug fixes
+- Fix Social toggles.
+- Newsletter: Fix post placement not displaying on certain block themes.
+- Social Previews: Fix distorted image for Tumblr preview.
 
 --------
 

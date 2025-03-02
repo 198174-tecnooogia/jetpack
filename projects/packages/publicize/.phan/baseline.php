@@ -11,12 +11,13 @@ return [
     // # Issue statistics:
     // PhanPluginDuplicateConditionalNullCoalescing : 6 occurrences
     // PhanTypeMismatchArgument : 6 occurrences
-    // PhanNoopNew : 3 occurrences
-    // PhanPluginMixedKeyNoKey : 3 occurrences
-    // PhanTypeMismatchArgumentNullable : 3 occurrences
+    // PhanPluginMixedKeyNoKey : 4 occurrences
+    // PhanPluginUnreachableCode : 4 occurrences
     // PhanUndeclaredClassMethod : 3 occurrences
     // PhanDeprecatedFunction : 2 occurrences
+    // PhanNoopNew : 2 occurrences
     // PhanPossiblyUndeclaredVariable : 2 occurrences
+    // PhanTypeMismatchArgumentNullable : 2 occurrences
     // PhanTypeMismatchReturnProbablyReal : 2 occurrences
     // PhanTypeMissingReturn : 2 occurrences
     // PhanImpossibleCondition : 1 occurrence
@@ -43,11 +44,12 @@ return [
         'src/class-rest-controller.php' => ['PhanPluginDuplicateConditionalNullCoalescing', 'PhanTypeMismatchReturnProbablyReal'],
         'src/rest-api/class-connections-controller.php' => ['PhanPluginMixedKeyNoKey', 'PhanTypeSuspiciousNonTraversableForeach'],
         'src/rest-api/class-connections-post-field.php' => ['PhanPluginDuplicateConditionalNullCoalescing'],
+        'src/rest-api/class-services-controller.php' => ['PhanPluginMixedKeyNoKey'],
         'src/social-image-generator/class-post-settings.php' => ['PhanPluginDuplicateConditionalNullCoalescing'],
         'src/social-image-generator/class-rest-settings-controller.php' => ['PhanPluginMixedKeyNoKey'],
         'src/social-image-generator/class-settings.php' => ['PhanPluginDuplicateConditionalNullCoalescing'],
         'src/social-image-generator/class-setup.php' => ['PhanTypeMismatchArgumentNullable'],
-        'tests/php/test-connections-post-field.php' => ['PhanTypeMismatchArgument'],
+        'tests/php/test-connections-post-field.php' => ['PhanPluginUnreachableCode', 'PhanTypeMismatchArgument'],
         'tests/php/test-publicize-og-optimization.php' => ['PhanDeprecatedFunction'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.

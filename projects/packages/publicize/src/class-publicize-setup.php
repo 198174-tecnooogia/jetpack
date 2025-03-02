@@ -40,6 +40,7 @@ class Publicize_Setup {
 
 		$rest_controllers = array(
 			REST_API\Connections_Controller::class,
+			REST_API\Services_Controller::class,
 		);
 
 		// Load the REST controllers.
@@ -81,6 +82,8 @@ class Publicize_Setup {
 			// Load the settings page.
 			new Jetpack_Social_Settings\Settings();
 		}
+
+		add_action( 'init', array( Keyring_Helper::class, 'init' ), 9, 0 );
 
 		( new Social_Image_Generator\Setup() )->init();
 	}

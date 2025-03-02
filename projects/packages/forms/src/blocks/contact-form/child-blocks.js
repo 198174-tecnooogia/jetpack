@@ -11,12 +11,12 @@ import JetpackDatePicker from './components/jetpack-field-datepicker';
 import JetpackDropdown from './components/jetpack-field-dropdown';
 import JetpackFieldMultipleChoice from './components/jetpack-field-multiple-choice';
 import JetpackFieldMultipleChoiceItem from './components/jetpack-field-multiple-choice/item';
+import JetpackFieldNumber from './components/jetpack-field-number';
 import JetpackFieldSingleChoice from './components/jetpack-field-single-choice';
 import JetpackFieldSingleChoiceItem from './components/jetpack-field-single-choice/item';
 import JetpackFieldTextarea from './components/jetpack-field-textarea';
 import { getIconColor } from './util/block-icons';
 import { useFormWrapper } from './util/form';
-import getFieldLabel from './util/get-field-label';
 import mergeSettings from './util/merge-settings';
 import renderMaterialIcon from './util/render-material-icon';
 
@@ -114,6 +114,11 @@ const FieldDefaults = {
 	},
 	transforms: {
 		to: [
+			{
+				type: 'block',
+				blocks: [ 'jetpack/field-number' ],
+				transform: attributes => createBlock( 'jetpack/field-number', attributes ),
+			},
 			{
 				type: 'block',
 				blocks: [ 'jetpack/field-text' ],
@@ -274,7 +279,7 @@ const editField = type => props => {
 		<JetpackField
 			clientId={ props.clientId }
 			type={ type }
-			label={ getFieldLabel( props.attributes, props.name ) }
+			label={ props.attributes.label }
 			required={ props.attributes.required }
 			requiredText={ props.attributes.requiredText }
 			setAttributes={ props.setAttributes }
@@ -356,6 +361,29 @@ const EditConsent = ( {
 	);
 };
 
+const EditNumber = props => {
+	useFormWrapper( props );
+
+	return (
+		<JetpackFieldNumber
+			clientId={ props.clientId }
+			label={ props.attributes.label }
+			required={ props.attributes.required }
+			requiredText={ props.attributes.requiredText }
+			setAttributes={ props.setAttributes }
+			isSelected={ props.isSelected }
+			defaultValue={ props.attributes.defaultValue }
+			placeholder={ props.attributes.placeholder }
+			id={ props.attributes.id }
+			width={ props.attributes.width }
+			attributes={ props.attributes }
+			insertBlocksAfter={ props.insertBlocksAfter }
+			min={ props.attributes.min }
+			max={ props.attributes.max }
+		/>
+	);
+};
+
 export const childBlocks = [
 	{
 		name: 'field-text',
@@ -376,6 +404,36 @@ export const childBlocks = [
 					type: 'string',
 					default: __( 'Text', 'jetpack-forms' ),
 					role: 'content',
+				},
+			},
+		},
+	},
+	{
+		name: 'field-number',
+		settings: {
+			...FieldDefaults,
+			title: __( 'Number Input Field', 'jetpack-forms' ),
+			description: __( 'Collect numbers from site visitors.', 'jetpack-forms' ),
+			icon: renderMaterialIcon(
+				<Path
+					fill={ getIconColor() }
+					d="M12 7H4V8.5H12V7ZM19.75 17.25V10.75H4.25V17.25H19.75ZM5.75 15.75V12.25H18.25V15.75H5.75Z"
+				/>
+			),
+			edit: EditNumber,
+			attributes: {
+				...FieldDefaults.attributes,
+				label: {
+					type: 'string',
+					default: __( 'Number', 'jetpack-forms' ),
+				},
+				min: {
+					type: 'number',
+					default: '',
+				},
+				max: {
+					type: 'number',
+					default: '',
 				},
 			},
 		},
