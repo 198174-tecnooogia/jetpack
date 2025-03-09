@@ -20,6 +20,7 @@ import debugFactory from 'debug';
 import useBlockModuleStatus from '../../hooks/use-block-module-status';
 import { getFeatureAvailability } from '../../lib/utils/get-feature-availability';
 import { canAIAssistantBeEnabled } from '../lib/can-ai-assistant-be-enabled';
+import { preprocessImageContent } from '../lib/preprocess-image-content';
 import { TYPE_ALT_TEXT, TYPE_CAPTION } from '../types';
 import AiAssistantImageExtensionToolbarDropdown from './components/image-toolbar-dropdown';
 /*
@@ -71,10 +72,14 @@ export function isPossibleToExtendImageBlock( blockName: string ): boolean {
 const blockEditWithAiComponents = createHigherOrderComponent( BlockEdit => {
 	function ExtendedBlock( props ) {
 		const { increaseRequestsCount, dequeueAsyncRequest, requireUpgrade } = useAiFeature();
-		const postId = useSelect( select => select( editorStore ).getCurrentPostId(), [] );
+		const postId = useSelect(
+			select => ( select( editorStore ) as { getCurrentPostId: () => number } ).getCurrentPostId(),
+			[]
+		);
 		const { getPostContent } = usePostContent();
 		const [ loading, setLoading ] = useState< LOADING_STATE >( false );
 		const { updateBlockAttributes } = useDispatch( editorStore );
+		const { createNotice } = useDispatch( 'core/notices' );
 		const wrapperRef = useRef< HTMLDivElement >( null );
 		const hasImage = !! props.attributes.url;
 
@@ -86,6 +91,33 @@ const blockEditWithAiComponents = createHigherOrderComponent( BlockEdit => {
 			}
 
 			setLoading( type );
+		}, [] );
+
+		const showErrorNotice = useCallback(
+			( message: string ) => {
+				createNotice( 'error', message, {
+					isDismissible: true,
+				} );
+			},
+			[ createNotice ]
+		);
+
+		const getBase64Image = useCallback( async ( url: string ) => {
+			try {
+				const response = await fetch( url );
+				const buffer = await response.arrayBuffer();
+				const base64String = btoa(
+					new Uint8Array( buffer ).reduce(
+						( data, byte ) => data + String.fromCharCode( byte ),
+						''
+					)
+				);
+
+				return `data:image/png;base64,${ base64String }`;
+			} catch {
+				// If we can't fetch the image, it must be external, so we return the original URL.
+				return url;
+			}
 		}, [] );
 
 		useEffect( () => {
@@ -105,8 +137,14 @@ const blockEditWithAiComponents = createHigherOrderComponent( BlockEdit => {
 				startLoading( type );
 
 				try {
+					const context: { positions?: number[] } = {};
+
 					if ( type === TYPE_ALT_TEXT ) {
 						openBlockSidebar( props.clientId );
+					}
+
+					if ( type === TYPE_CAPTION ) {
+						context.positions = [ props.clientId ];
 					}
 
 					dequeueAsyncRequest();
@@ -117,10 +155,12 @@ const blockEditWithAiComponents = createHigherOrderComponent( BlockEdit => {
 								role: 'jetpack-ai' as const,
 								context: {
 									type: type,
-									content: getPostContent(),
+									content: getPostContent( preprocessImageContent ),
+									...context,
 									images: [
 										{
-											url: props.attributes.url,
+											// We convert the image to a base64 string to avoid inaccesible URLs for private images.
+											url: await getBase64Image( props.attributes.url ),
 										},
 									],
 								},
@@ -134,7 +174,11 @@ const blockEditWithAiComponents = createHigherOrderComponent( BlockEdit => {
 
 					increaseRequestsCount();
 
-					const parsedResponse: { texts?: string[]; captions?: string[] } = JSON.parse( response );
+					const parsedResponse: { texts?: string[]; captions?: string[] } = JSON.parse(
+						response
+							?.replace?.( /^```json\s*/, '' ) // Remove the markdown code block if it exists.
+							?.replace( /```$/, '' )
+					);
 
 					if ( type === TYPE_ALT_TEXT ) {
 						const alt = parsedResponse.texts?.[ 0 ];
@@ -145,18 +189,23 @@ const blockEditWithAiComponents = createHigherOrderComponent( BlockEdit => {
 					}
 				} catch ( error ) {
 					debug( `Error generating ${ type }`, error );
+					if ( error?.message ) {
+						showErrorNotice( error.message );
+					}
 				} finally {
 					setLoading( false );
 				}
 			},
 			[
 				dequeueAsyncRequest,
+				getBase64Image,
 				getPostContent,
 				increaseRequestsCount,
 				postId,
 				props.attributes.url,
 				props.clientId,
 				requireUpgrade,
+				showErrorNotice,
 				startLoading,
 				updateBlockAttributes,
 			]
